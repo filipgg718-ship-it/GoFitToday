@@ -1,3 +1,4 @@
+
 name: Build GoFitToday APK
 
 on:
@@ -12,7 +13,7 @@ permissions:
 
 jobs:
   build:
-    name: Build debug APK
+    name: Build Android APK
     runs-on: ubuntu-latest
 
     steps:
@@ -27,16 +28,22 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools;platforms;platforms;platforms;build-tools;'
 
-      - name: Install Gradle 8.9
+      - name: Install Android SDK components
+        run: |
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Install Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
 
-      - name: Accept Android SDK licenses
+      - name: Accept Android licenses
         run: yes | sdkmanager --licenses || true
 
-      - name: Build debug APK
+      - name: Build APK
         run: gradle --no-daemon assembleDebug
 
       - name: Upload APK
